@@ -1,11 +1,22 @@
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import "./App.css"
 import { Form } from "./components/Form"
 import { type IUser } from "./types"
 import { User } from "./components/User"
+import { apiClient } from "./api/client"
 
 export default function App() {
     const [users, setUsers] = useState<IUser[]>([])
+
+    const fetchUsers = async () => {
+        const fetchedUsers = (await apiClient.getUsers()).data
+        fetchedUsers && setUsers(fetchedUsers)
+    }
+
+    useEffect(() => {
+        fetchUsers()
+    }, [])
+
     return (
         <div className="app">
             <header className="header">
