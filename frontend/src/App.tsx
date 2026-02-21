@@ -43,15 +43,26 @@ export default function App() {
         e.preventDefault()
         setError(null)
 
-        if (!formData.name.trim() && !formData.email.trim()) {
+        if (!formData.name.trim() || !formData.email.trim()) {
             setError("Name and email are required")
             return
         }
+
         try {
-            await apiClient.createUser(formData)
-            await fetchUsers()
-        } catch (error) {
+            const response = await apiClient.createUser(formData)
             
+            if (response.success && response.data) {
+                await fetchUsers()
+                setFormData({name: "", email: ""})
+            } else {
+                setError(response.error || "Failed to create user")
+            }
+        } catch (error) {
+            if (error instanceof ApiError) {
+                setError(`Error: ${error.status}: ${error.message}`)
+            } else {
+                setError("Unexpected error")
+            }
         }
     }
 
