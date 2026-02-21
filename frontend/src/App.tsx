@@ -12,8 +12,19 @@ export default function App() {
 
     const fetchUsers = async () => {
         setIsLoading(true)
-        const fetchedUsers = (await apiClient.getUsers()).data
-        fetchedUsers && setUsers(fetchedUsers)
+        try {
+            const response = await apiClient.getUsers()
+
+            if (response.success && response.data) {
+                setUsers(response.data)
+            }
+
+
+        } catch (error) {
+            
+        } finally {
+            setIsLoading(false)
+        }
     }
 
     useEffect(() => {
