@@ -7,9 +7,11 @@ import { apiClient } from "./api/client"
 
 export default function App() {
     const [users, setUsers] = useState<IUser[]>([])
-    const [error, setError] = useState<null | string>("asd")
+    const [isLoading, setIsLoading] = useState(false)
+    const [error, setError] = useState<null | string>(null)
 
     const fetchUsers = async () => {
+        setIsLoading(true)
         const fetchedUsers = (await apiClient.getUsers()).data
         fetchedUsers && setUsers(fetchedUsers)
     }
@@ -27,20 +29,24 @@ export default function App() {
             <main className="main">
                 {error && <div className="error-banner">
                     {error}
-                    <button className="error-close">x</button>
-                </div>} 
+                    <button onClick={() => setError(null)} className="error-close">x</button>
+                </div>}
 
                 <Form />
 
                 <section className="users-section">
                     <div className="section-header">
                         <h2>Users</h2>
-                        <button onClick={() => setError(null)} className="btn btn-secondary">Refresh</button>
+                        <button className="btn btn-secondary">Refresh</button>
                     </div>
 
-                    <div className="users-list">
-                        {users.map((el, i) => <User key={i} {...el} />)}
-                    </div>
+                    {isLoading && users.length === 0 ?
+                        (
+                            <div className="loading">Loading users...</div>
+                        ) :
+                        (<div className="users-list">
+                            {users.map((el, i) => <User key={i} {...el} />)}
+                        </div>)}
                 </section>
             </main>
         </div>
