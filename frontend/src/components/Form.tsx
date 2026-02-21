@@ -1,14 +1,15 @@
-import type { ChangeEvent, Dispatch } from "react"
+import type { ChangeEvent, Dispatch, FormEvent } from "react"
 import type { ICreateUserRequest } from "../types"
 
 export interface IFormData extends ICreateUserRequest { }
 
 export interface IFormProps {
+    handleSubmit: (e: FormEvent) => void,
     formData: IFormData,
     setFormData: Dispatch<React.SetStateAction<IFormData>>
 }
 
-export const Form = ({ formData, setFormData }: IFormProps) => {
+export const Form = ({ handleSubmit, formData, setFormData }: IFormProps) => {
     const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target
         setFormData(old => ({ ...old, [name]: value }))
@@ -17,7 +18,7 @@ export const Form = ({ formData, setFormData }: IFormProps) => {
     return (
         <section className="form-section">
             <h2>Add New User</h2>
-            <form className="user-form">
+            <form onSubmit={handleSubmit} className="user-form">
                 <div className="form-group">
                     <label htmlFor="name">Name:</label>
                     <input

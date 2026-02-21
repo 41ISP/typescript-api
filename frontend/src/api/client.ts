@@ -1,4 +1,4 @@
-import { type IApiResponse, type IUser } from "../types"
+import { type IApiResponse, type ICreateUserRequest, type IUser } from "../types"
 
 export class ApiError extends Error {
     status: number
@@ -17,7 +17,7 @@ class ApiClient {
         this.baseUrl = baseUrl
     }
 
-    private buildUrl (endpoint: string, params?: Record<string, any>) {
+    private buildUrl(endpoint: string, params?: Record<string, any>) {
         const url = new URL(`${this.baseUrl}${endpoint}`)
         // {
         //     a: 1,
@@ -39,7 +39,7 @@ class ApiClient {
     private async request<T>(
         endpoint: string,
         options?: RequestInit
-    ): Promise <T> {
+    ): Promise<T> {
         const url = `${this.baseUrl}${endpoint}`
         const config: RequestInit = {
             ...options,
@@ -78,8 +78,26 @@ class ApiClient {
             })
     }
 
+    async post<TRequest, TResponse>(
+        endpoint: string,
+        data: TRequest
+    ): Promise<TResponse> {
+        return this.request<TResponse>(endpoint,
+            {
+                method: "POST",
+                body: JSON.stringify(data)
+            }
+        )
+    }
+
     async getUsers() {
         return this.get<IApiResponse<IUser[]>>("/users")
+    }
+
+    async createUser(data: ICreateUserRequest):
+        Promise<IApiResponse<IUser>> {
+        return this.post<ICreateUserRequest,
+            IApiResponse<IUser>>(`/users`, data)
     }
 }
 

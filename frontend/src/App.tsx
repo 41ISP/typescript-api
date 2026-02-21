@@ -41,9 +41,15 @@ export default function App() {
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
+        setError(null)
 
+        if (!formData.name.trim() && !formData.email.trim()) {
+            setError("Name and email are required")
+            return
+        }
         try {
-            
+            await apiClient.createUser(formData)
+            await fetchUsers()
         } catch (error) {
             
         }
@@ -61,7 +67,7 @@ export default function App() {
                     <button onClick={() => setError(null)} className="error-close">x</button>
                 </div>}
 
-                <Form formData={formData} setFormData={setFormData} />
+                <Form handleSubmit={handleSubmit} formData={formData} setFormData={setFormData} />
 
                 <section className="users-section">
                     <div className="section-header">
