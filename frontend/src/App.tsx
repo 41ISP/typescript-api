@@ -1,7 +1,11 @@
+import { useState } from "react"
 import "./App.css"
 import { Form } from "./components/Form"
+import { type IUser } from "./types"
+import { User } from "./components/User"
 
 export default function App() {
+    const [users, setUsers] = useState<IUser[]>([])
     return (
         <div className="app">
             <header className="header">
@@ -17,7 +21,9 @@ export default function App() {
                         <button className="btn btn-secondary">Refresh</button>
                     </div>
 
-                    <div className="users-list"></div>
+                    <div className="users-list">
+                        {users.map((el) => <User {...el} />)}
+                    </div>
                 </section>
             </main>
         </div>
