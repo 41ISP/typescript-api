@@ -1,11 +1,15 @@
-import { useEffect, useState } from "react"
+import { useEffect, useState, type FormEvent } from "react"
 import "./App.css"
-import { Form } from "./components/Form"
+import { Form, type IFormData } from "./components/Form"
 import { type IUser } from "./types"
 import { User } from "./components/User"
-import { apiClient } from "./api/client"
+import { apiClient, ApiError } from "./api/client"
 
 export default function App() {
+    const [formData, setFormData] = useState<IFormData>({
+        name: "",
+        email: ""
+    })
     const [users, setUsers] = useState<IUser[]>([])
     const [isLoading, setIsLoading] = useState(false)
     const [error, setError] = useState<null | string>(null)
@@ -17,11 +21,15 @@ export default function App() {
 
             if (response.success && response.data) {
                 setUsers(response.data)
+            } else {
+                setError(response.error || "Failed to fetch users")
             }
-
-
         } catch (error) {
-            
+            if (error instanceof ApiError) {
+                setError(`Error ${error.status}: ${error.message}`)
+            } else {
+                setError("Unexpected error")
+            }
         } finally {
             setIsLoading(false)
         }
@@ -30,6 +38,16 @@ export default function App() {
     useEffect(() => {
         fetchUsers()
     }, [])
+
+    const handleSubmit = async (e: FormEvent) => {
+        e.preventDefault()
+
+        try {
+            
+        } catch (error) {
+            
+        }
+    }
 
     return (
         <div className="app">
@@ -43,12 +61,12 @@ export default function App() {
                     <button onClick={() => setError(null)} className="error-close">x</button>
                 </div>}
 
-                <Form />
+                <Form formData={formData} setFormData={setFormData} />
 
                 <section className="users-section">
                     <div className="section-header">
                         <h2>Users</h2>
-                        <button className="btn btn-secondary">Refresh</button>
+                        <button onClick={() => fetchUsers()} className="btn btn-secondary">Refresh</button>
                     </div>
 
                     {isLoading && users.length === 0 ?

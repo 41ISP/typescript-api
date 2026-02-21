@@ -10,3 +10,8 @@ export interface IUser {
   email: string;
   createdAt: string;
 }
+
+export interface ICreateUserRequest {
+  name: string,
+  email: string
+}
